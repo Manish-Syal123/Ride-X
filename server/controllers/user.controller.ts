@@ -7,6 +7,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
 // endpoint to register new user
+// register new user
 export const registerUser = async (
   req: Request,
   res: Response,
@@ -14,17 +15,27 @@ export const registerUser = async (
 ) => {
   try {
     const { phone_number } = req.body;
-
     try {
-      await client.verify._v2
+      await client.verify.v2
         ?.services(process.env.TWILIO_SERVICE_SID!)
-        .verifications.create({ to: phone_number, channel: "sms" });
+        .verifications.create({
+          channel: "sms",
+          to: phone_number,
+        });
+
+      res.status(201).json({
+        success: true,
+      });
     } catch (error) {
       console.log(error);
+      res.status(400).json({
+        success: false,
+      });
     }
-
-    res.status(201).json({ success: true });
   } catch (error) {
     console.log(error);
+    res.status(400).json({
+      success: false,
+    });
   }
 };

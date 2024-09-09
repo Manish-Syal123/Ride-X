@@ -8,9 +8,21 @@ import SelectInput from "../common/select-input";
 import { useState } from "react";
 import { countryItems } from "@/configs/country-list";
 
-export default function PhoneNumberInput({ width }: any) {
-  const [countryCode, setCountryCode] = useState("+91");
+interface Props {
+  width?: number;
+  phone_number: string;
+  setPhone_number: (phone_number: string) => void;
+  countryCode: string;
+  setCountryCode: (countryCode: string) => void;
+}
 
+export default function PhoneNumberInput({
+  width,
+  phone_number,
+  setPhone_number,
+  countryCode,
+  setCountryCode,
+}: Props) {
   return (
     <View>
       <Text
@@ -39,7 +51,7 @@ export default function PhoneNumberInput({ width }: any) {
             title="+91"
             placeholder={countryCode}
             value={countryCode}
-            onValueChange={(text) => setCountryCode(text)}
+            onValueChange={setCountryCode}
             showWarning={false}
             warning={"Please choose your country code"}
             items={countryItems}
@@ -59,6 +71,8 @@ export default function PhoneNumberInput({ width }: any) {
             placeholderTextColor={color.subtitle}
             placeholder={"Enter your number"}
             keyboardType="numeric"
+            value={phone_number}
+            onChangeText={(text) => setPhone_number(text)}
             maxLength={10}
           />
         </View>

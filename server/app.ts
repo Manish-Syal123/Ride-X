@@ -2,8 +2,10 @@ require("dotenv").config();
 import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route";
+import cors from "cors";
 
 export const app = express();
+app.use(cors());
 // body parser
 app.use(express.json({ limit: "50mb" }));
 
