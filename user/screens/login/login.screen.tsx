@@ -24,17 +24,25 @@ const LoginScreen = () => {
       });
     } else {
       const phoneNumber = `+${countryCode}${phone_number}`;
-      console.log(phoneNumber);
 
       await axios
         .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/registration`, {
           phone_number: phoneNumber,
         })
         .then((res) => {
-          console.log("Response====>", res);
+          router.push({
+            pathname: "/(routes)/otp-verification",
+            params: { phoneNumber },
+          });
         })
         .catch((err) => {
-          console.error("Error====>", err);
+          toast.show(
+            "Something went wrong! Please re-check your phone number",
+            {
+              type: "danger",
+              placement: "bottom",
+            }
+          );
         });
     }
   };
