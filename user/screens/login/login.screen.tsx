@@ -14,7 +14,8 @@ import axios from "axios";
 
 const LoginScreen = () => {
   const [phone_number, setPhone_number] = useState("");
-  const [countryCode, setCountryCode] = useState("+91");
+  const [countryCode, setCountryCode] = useState("91");
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleSubmit = async () => {
@@ -23,6 +24,7 @@ const LoginScreen = () => {
         placement: "bottom",
       });
     } else {
+      setLoading(true);
       const phoneNumber = `+${countryCode}${phone_number}`;
 
       await axios
@@ -30,12 +32,16 @@ const LoginScreen = () => {
           phone_number: phoneNumber,
         })
         .then((res) => {
+          setLoading(false);
+          console.log(res);
+
           router.push({
             pathname: "/(routes)/otp-verification",
             params: { phoneNumber },
           });
         })
         .catch((err) => {
+          setLoading(false);
           toast.show(
             "Something went wrong! Please re-check your phone number",
             {
@@ -64,7 +70,11 @@ const LoginScreen = () => {
                   setCountryCode={setCountryCode}
                 />
                 <View style={[external.mt_25, external.Pb_15]}>
-                  <Button title="Get Otp" onPress={() => handleSubmit()} />
+                  <Button
+                    title="Get Otp"
+                    onPress={() => handleSubmit()}
+                    disabled={loading}
+                  />
                 </View>
               </View>
             </View>

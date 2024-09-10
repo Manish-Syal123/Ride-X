@@ -16,7 +16,7 @@ datasource db {
 model user {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String?
-  phone_number Float    @unique
+  phone_number String   @unique
   email        String?  @unique
   ratings      Float    @default(0)
   totalRides   Float    @default(0)

@@ -15,6 +15,7 @@ import axios from "axios";
 
 const OtpVerificationScreen = () => {
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const { phoneNumber } = useLocalSearchParams();
   const handleSubmit = async () => {
@@ -23,8 +24,9 @@ const OtpVerificationScreen = () => {
         placement: "bottom",
       });
     } else {
+      setLoading(true);
       const otpNumbers = `${otp}`;
-      console.log(otpNumbers, "<---->", phoneNumber);
+      // console.log(otpNumbers, "<---->", phoneNumber);
 
       await axios
         .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/verify-otp`, {
@@ -32,20 +34,27 @@ const OtpVerificationScreen = () => {
           otp: otpNumbers,
         })
         .then((res) => {
-          // router.push("/(routes)/otp-verification");
-          toast.show("Account verified successfully!", {
-            type: "success",
-            placement: "bottom",
-          });
+          setLoading(false);
+          // console.log(res);
+          if (res.data.user.email === null) {
+            router.push({
+              pathname: "/(routes)/registration",
+              params: { user: JSON.stringify(res.data.user) },
+            });
+            toast.show("Account verified successfully!", {
+              type: "success",
+              placement: "bottom",
+            });
+          } else {
+            router.push("/(tabs)/home");
+          }
         })
         .catch((err) => {
-          toast.show(
-            "Something went wrong! Please re-check your phone number",
-            {
-              type: "danger",
-              placement: "bottom",
-            }
-          );
+          setLoading(false);
+          toast.show("Something went wrong! Please enter correct OTP", {
+            type: "danger",
+            placement: "bottom",
+          });
         });
     }
   };
@@ -62,13 +71,17 @@ const OtpVerificationScreen = () => {
           />
           <OTPTextInput
             handleTextChange={(code) => setOtp(code)}
-            inputCount={6}
+            inputCount={4}
             textInputStyle={style.otpTextInput}
             tintColor={color.subtitle}
             autoFocus={false}
           />
           <View style={[external.mt_30, external.Pb_20]}>
-            <Button title="Verify" onPress={() => handleSubmit()} />
+            <Button
+              title="Verify"
+              onPress={() => handleSubmit()}
+              disabled={loading}
+            />
           </View>
           <View style={[external.mb_15]}>
             <View
