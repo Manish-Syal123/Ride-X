@@ -13,10 +13,13 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "@types/jsonwebtoken": "^9.0.6",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "nylas": "^7.5.2",
     "ts-node-dev": "^2.0.0",
     "twilio": "^5.3.0",
     "typescript": "^5.5.4"

@@ -8,7 +8,6 @@ import Input from "@/components/common/input";
 import Button from "@/components/common/button";
 import color from "@/themes/app.colors";
 import axios from "axios";
-import { Toast } from "react-native-toast-notifications";
 
 const RegistrationScreen = () => {
   const [emailFormatWarning, setEmailFormatWarning] = useState("");
@@ -31,16 +30,31 @@ const RegistrationScreen = () => {
   };
 
   const handleSubmit = async () => {
-    const userData: any = {
-      id: parsedUser?._id,
-      name: formData.name,
-      email: formData.email,
-      phone_number: user.phone_number,
-    };
-    router.push({
-      pathname: "/(routes)/email-verification",
-      params: { user: JSON.stringify(userData) },
-    });
+    setLoading(true);
+    await axios
+      .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/email-otp-request`, {
+        email: formData.email,
+        name: formData.name,
+        userId: parsedUser.id,
+      })
+      .then((res) => {
+        setLoading(false);
+        const userData: any = {
+          id: parsedUser.id,
+          name: formData.name,
+          email: formData.email,
+          phone_number: parsedUser.phone_number,
+          token: res.data.token,
+        };
+        router.push({
+          pathname: "/(routes)/email-verification",
+          params: { user: JSON.stringify(userData) },
+        });
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error.response.data.message);
+      });
   };
 
   console.log(user);
@@ -103,7 +117,7 @@ const RegistrationScreen = () => {
                 <Button
                   onPress={() => handleSubmit()}
                   title="Next"
-                  //   disabled={loading}
+                  disabled={loading}
                   backgroundColor={color.buttonBg}
                   textColor={color.whiteColor}
                 />

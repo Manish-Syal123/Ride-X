@@ -18,6 +18,7 @@ const OtpVerificationScreen = () => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const { phoneNumber } = useLocalSearchParams();
+
   const handleSubmit = async () => {
     if (otp === "") {
       toast.show("Please enter enter your OTP", {
