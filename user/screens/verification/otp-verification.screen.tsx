@@ -12,6 +12,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { commonStyles } from "@/styles/common.style";
 import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OtpVerificationScreen = () => {
   const [otp, setOtp] = useState("");
@@ -34,10 +35,11 @@ const OtpVerificationScreen = () => {
           phone_number: phoneNumber,
           otp: otpNumbers,
         })
-        .then((res) => {
+        .then(async (res) => {
           setLoading(false);
           // console.log(res);
           if (res.data.user.email === null) {
+            // means it's a new user, this user is visiting for the first time to our application
             router.push({
               pathname: "/(routes)/registration",
               params: { user: JSON.stringify(res.data.user) },
@@ -47,6 +49,8 @@ const OtpVerificationScreen = () => {
               placement: "bottom",
             });
           } else {
+            // means it's an existing user, we won't redirect him/her to registration screen, as user detail is already present in the database
+            await AsyncStorage.setItem("accessToken", res.data.accessToken);
             router.push("/(tabs)/home");
           }
         })

@@ -68,11 +68,7 @@ export const verifyOtp = async (
       });
 
       if (isUserExists) {
-        res.status(200).json({
-          success: true,
-          message: "OTP verified successfully!",
-          user: isUserExists,
-        });
+        await sendToken(isUserExists, res); // this will send the response along with accessToken
       } else {
         // create new user/account
         const user = await prisma.user.create({
@@ -156,7 +152,6 @@ export const sendingOtpToEmail = async (
 };
 
 // email otp verification
-
 export const verifyingEmail = async (
   req: Request,
   res: Response,
@@ -185,6 +180,7 @@ export const verifyingEmail = async (
       },
     });
 
+    // creating new user in the database / updating user in the database
     if (user?.email === null) {
       const updatedUser = await prisma.user.update({
         where: {
@@ -195,7 +191,7 @@ export const verifyingEmail = async (
           email: email,
         },
       });
-      await sendToken(updatedUser, res);
+      await sendToken(updatedUser, res); // this will send the response along with accessToken
     }
   } catch (error) {
     console.log(error);
@@ -203,5 +199,15 @@ export const verifyingEmail = async (
       success: false,
       message: "Your otp is expired!",
     });
+  }
+};
+
+// get loggedin user data
+export const getLoggedInUserData = async (req: any, res: Response) => {
+  try {
+    const user = req.user; // the isAuthenticated middleware will attach the user data to the request object
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
   }
 };
